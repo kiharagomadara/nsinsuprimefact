@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./prime-factorization-game.css">
+    <script>
+
+        let N=0n;
+        let result="";
+        //乱数生成および10進数変換
+      function generateRandomString() {
+
+      characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  if(document.getElementById("komoji").checked){
+     characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  }
+  
+  
+
+  
+    
+  
+  result=document.getElementById("suuzi").value;
+  N=0n;
+  
+  //ここら辺はgemini任せ
+ const charactersLength =document.getElementById("sinsuu").value;
+  
+  const Nn=result.split("").map((str)=>characters.indexOf(str));
+
+  document.getElementById("rand").textContent=result;
+length=Nn.length;
+  //10進数に変換する
+  for(let j=0;j<length;j++){
+    N+=BigInt(Nn[j])*((BigInt(charactersLength)**BigInt(length-j-1)));
+  }
+  document.getElementById("n10").textContent="10進数:"+N;
+  ran=result;
+
+  
+    soinsuubunkai();
+  
+}
+
+//10進数に変換
+function zyussinsuu(){
+  characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  if(document.getElementById("komoji").checked){
+     characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  }
+  result1=document.getElementById("suuzi").value;
+  N1=0n;
+  
+  //ここら辺はgemini任せ
+ const charactersLength =document.getElementById("sinsuu").value;
+  
+  const Nn=result1.split("").map((str)=>characters.indexOf(str));
+
+  document.getElementById("rand").textContent=result1;
+length=Nn.length;
+for(let j=0;j<length;j++){
+    N1+=BigInt(Nn[j])*((BigInt(charactersLength)**BigInt(length-j-1)));
+  }
+   document.getElementById("n10").textContent="10進数:"+N1;
+}
+
+async function soinsuubunkai(){
+    
+    const factor=await Primefactorization(N);
+    const factorsN=soinsuu(factor);
+    document.getElementById("rand").textContent=result+"="+factorsN.join("×");
+    document.getElementById("randt").textContent=factorsN.join("×");
+    document.getElementById("keisan").innerHTML=`<br>`;
+    document.getElementById("randt").innerHTML=`<br>`;
+}
+
+function totyuu(tn,tfactors){
+  const tfactorsn=soinsuu(tfactors);
+
+  return result+"="+tfactorsn.join("×")+"ka"+tn;
+}
+
+  factorsss= [];
+  soiresult=``;
+  //与えられた10進数の自然数(Bigint値)を素因数分解し、素因数を小さい順に並べた配列を返します
+async function Primefactorization(n) {
+  const factors = [];
+  soiresult=``;
+  factorsss=[];
+  const NN=[];
+if (n < 2n) return [];
+document.getElementById("keisan").textContent="計算中";
+if(document.getElementById("sinsuu").value==10){
+document.getElementById("rand").innerHTML=`${result}=<font color="red">${n}</font>`;
+}else{
+  document.getElementById("rand").innerHTML=`${result}=<font color="red">${result}</font>`;
+}
+ await sleep(1);
+  let divisor = 2n;
+  
+  while (n >= divisor * divisor) {
+    if (n % divisor == 0n) {
+        
+      factors.push(divisor);
+      factorsss[0]=divisor;
+      soiresult+=`${soinsuu(factorsss)}×`;
+      n = n / divisor;
+      await sleep(10);
+      NN[0]=n;
+     //setTimeout(()=>{document.getElementById("rand").innerHTML=`${result}=${soinsuu(factorsss).join("×")}×<font color="red">${soinsuu(NN)}</font>`;})
+     setTimeout(()=>{document.getElementById("rand").innerHTML=`${result}=`+soiresult+`<font color="red">${soinsuu(NN)}</font>`;})
+     //setTimeout(()=>{document.getElementById("randt").innerHTML+=`${divisor}×<font color="red">${n}</font>`;})
+    await sleep(5);
+    }else if(divisor==2n){
+      divisor++;
+    }else{
+      divisor+=2n;
+    }
+    
+  }
+
+  // 最後に残った数も素数であるため、追加する
+  if (n > 1n) {
+    factors.push(n);
+     
+  }
+  
+  return factors;
+}
+
+//処理を一時停止します
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//素因数をn進数に直す
+function soinsuu(x){
+ characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  if(document.getElementById("komoji").checked){
+     characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  }
+  let length1=x.length;
+  const factorsn=[];
+  let result1="";
+  let sinsuu=BigInt(document.getElementById("sinsuu").value);
+  for(let i=0;i<length1;i++){
+    for(;x[i]>=1;){
+      result1=characters.charAt(Number(x[i]%sinsuu))+result1;
+      x[i]/=sinsuu;
+      factorsn[i]=result1;
+    }
+    result1="";
+  }
+
+  return factorsn;
+}
+    </script>
+</head>
+<body id="body">
+
+
+    <div class="title">
+    n進数素因数分解    <br><br>
+    </div>
+    <input id="suuzi" type="text" value="" placeholder="素因数分解したい数字を入力" size="100px">
+    <p>進数:<input type="text" id="sinsuu" placeholder="進数(2～62)" value="10"></p>
+    <div class="rand">
+        <p id="rand"><br></p>
+      </div>
+        <p id="keisan"><br></p>
+        <p id="randt"><br></p>
+    
+    <div class="run">
+        <button class="startb" onclick="generateRandomString()">素因数分解</button>
+        <button class="startb" onclick="zyussinsuu()">10進数に変換</button>
+    </div>
+    <p id="n10">10進数:</p>
+    <p id="test"></p>
+    <br>
+    <div class="start"></div><br>
+    <div class="settei">
+        <p>設定</p>
+        <input type="checkbox" name="komoji" id="komoji" >アルファベットは小文字を先にする<br>
+    </div>
+
+    
+</body>
+</html>
